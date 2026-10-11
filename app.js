@@ -1,5 +1,5 @@
 import { hotels as seedHotels } from './data.js?v=2';
-import { criteria, rankHotels } from './core.js?v=2';
+import { criteria, rankHotels } from './core.js?v=3';
 
 const STORAGE_KEY = 'reisekompass-v1';
 const defaultWeights = Object.fromEntries(criteria.map(([key]) => [key, ['reef','wind','pool','couples','value'].includes(key) ? 5 : 3]));
@@ -11,7 +11,7 @@ const euro = new Intl.NumberFormat('de-DE', {style:'currency', currency:'EUR', m
 const date = new Intl.DateTimeFormat('de-DE', {dateStyle:'short', timeStyle:'short'});
 const persist = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 const hotels = () => seedHotels.map(h => ({...h, prices: state.prices[h.id] || []}));
-const query = () => ({ maxPrice:$('#maxPrice').value, operator:$('#operatorFilter').value, departureAfter:$('#departureAfter').value, returnBefore:$('#returnBefore').value, dateFrom:$('#dateFrom').value, dateTo:$('#dateTo').value, duration:$('#duration').value });
+const query = () => ({ maxPrice:$('#maxPrice').value, operator:$('#operatorFilter').value, departureAfter:$('#departureAfter').value, returnBefore:$('#returnBefore').value, dateFrom:$('#dateFrom').value, dateTo:$('#dateTo').value });
 
 function renderWeights() {
   $('#weights').innerHTML = criteria.map(([key,label]) => `<label><span>${label}</span><output for="w-${key}">${state.weights[key]}</output><input id="w-${key}" data-weight="${key}" type="range" min="0" max="5" value="${state.weights[key]}"></label>`).join('');
@@ -52,7 +52,8 @@ function hotelCard(hotel,index) {
 }
 
 function searchLink(source, hotel) {
-  const term = encodeURIComponent(`${hotel} ${$('#dateFrom').value || ''} ${$('#duration').value} Nächte Nürnberg`);
+  const period = [$('#dateFrom').value, $('#dateTo').value].filter(Boolean).join(' bis ');
+  const term = encodeURIComponent(`${hotel} ${period} Nürnberg`);
   return source === 'check24' ? `https://urlaub.check24.de/suche?q=${term}` : `https://www.ab-in-den-urlaub.de/search?search=${term}`;
 }
 
