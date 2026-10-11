@@ -36,7 +36,12 @@ function renderHotels() {
 
 function hotelCard(hotel,index) {
   const score = Math.round(hotel.score * 10);
-  const source = hotel.price ? `<div class="price"><small>${hotel.price.source} · ${hotel.price.operator}</small><strong>${euro.format(hotel.price.amount)}</strong><span>gesamt für 2 · Stand ${new Date(hotel.price.savedAt).toLocaleDateString('de-DE')}</span></div>` : `<div class="price missing"><small>Noch kein Angebot</small><strong>Preis fehlt</strong><button class="text-button" data-add-price="${hotel.id}">Jetzt eintragen →</button></div>`;
+  const storedCount = hotel.prices.length;
+  const source = hotel.price
+    ? `<div class="price"><small>${hotel.price.source} · ${hotel.price.operator}</small><strong>${euro.format(hotel.price.amount)}</strong><span>gesamt für 2 · Stand ${new Date(hotel.price.savedAt).toLocaleDateString('de-DE')}</span></div>`
+    : storedCount
+      ? `<div class="price filtered"><small>${storedCount} Preisstand${storedCount === 1 ? '' : 'e'} gespeichert</small><strong>Durch Filter ausgeblendet</strong><button class="text-button" data-detail="${hotel.id}">Preisstand ansehen →</button></div>`
+      : `<div class="price missing"><small>Noch kein Angebot</small><strong>Preis fehlt</strong><button class="text-button" data-add-price="${hotel.id}">Jetzt eintragen →</button></div>`;
   return `<article class="hotel-card card">
     <div class="rank ${index < 3 ? 'top' : ''}">${index+1}</div>
     <div class="hotel-main"><div class="hotel-meta"><span>${'★'.repeat(hotel.stars)}</span> ${hotel.area}</div><h3>${hotel.name}</h3><p>${hotel.summary}</p><div class="tags">${hotel.tags.map(t=>`<span>${t}</span>`).join('')}</div></div>
@@ -65,7 +70,10 @@ function savePrice(event) {
   if (!$('#priceForm').reportValidity()) return;
   const id = $('#priceHotel').value;
   const entry = { id: crypto.randomUUID(), source:$('#priceSource').value, amount:Number($('#priceAmount').value), outbound:$('#outbound').value, inbound:$('#inbound').value, transfer:$('#transfer').value.trim(), operator:$('#operator').value.trim(), savedAt:new Date().toISOString() };
-  state.prices[id] = [...(state.prices[id] || []), entry]; persist(); $('#priceDialog').close(); $('#priceForm').reset(); renderHotels(); toast('Preisstand wurde lokal gespeichert.');
+  state.prices[id] = [...(state.prices[id] || []), entry];
+  persist(); $('#priceDialog').close(); $('#priceForm').reset(); renderHotels();
+  const isVisible = rankHotels(hotels(), state.weights, query()).find(hotel => hotel.id === id)?.price;
+  toast(isVisible ? 'Preisstand wurde lokal gespeichert.' : 'Preisstand gespeichert – die aktiven Suchfilter blenden ihn aus.');
 }
 
 function toast(message) { $('#toast').textContent=message; $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2800); }
@@ -75,6 +83,8 @@ renderWeights(); renderHotels();
 document.querySelectorAll('.filters input, .filters select, #sort').forEach(el => el.addEventListener('input', renderHotels));
 $('#openPricesButton').addEventListener('click',()=>openPriceDialog());
 $('#priceForm').addEventListener('submit',savePrice);
+document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
 $('#resetButton').addEventListener('click',()=>{ if(confirm('Gewichtungen und gespeicherte Preise wirklich zurücksetzen?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }});
 document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); }));
 if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
+
