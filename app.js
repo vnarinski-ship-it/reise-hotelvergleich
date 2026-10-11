@@ -18,6 +18,7 @@ function renderWeights() {
   document.querySelectorAll('[data-weight]').forEach(input => input.addEventListener('input', event => {
     state.weights[event.target.dataset.weight] = Number(event.target.value);
     event.target.previousElementSibling.value = event.target.value;
+    $('#sort').value = 'score';
     persist(); renderHotels();
   }));
 }
