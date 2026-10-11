@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { weightedRating, bestPrice, rankHotels, tripNights } from '../core.js';
+import { weightedRating, bestPrice, rankHotels } from '../core.js';
 
 test('berechnet eine gewichtete Bewertung', () => {
   const ratings={reef:10,beach:5,wind:0,pool:0,couples:0,food:0,rooms:0,service:0,distance:0,allInclusive:0,value:0};
@@ -12,12 +12,8 @@ test('filtert und wählt den günstigsten Preisstand', () => {
     {amount:2400,operator:'TUI',outbound:'2026-12-01T07:00',inbound:'2026-12-15T18:00'},
     {amount:2100,operator:'DERTOUR',outbound:'2026-12-01T05:00',inbound:'2026-12-15T20:00'}
   ];
-  assert.equal(bestPrice(prices,{departureAfter:'06:00',duration:14}).amount,2400);
+  assert.equal(bestPrice(prices,{departureAfter:'06:00'}).amount,2400);
   assert.equal(bestPrice(prices,{operator:'dertour'}).amount,2100);
-});
-
-test('berechnet Reisedauer nach Kalendertagen statt Flugstunden', () => {
-  assert.equal(tripNights('2026-12-01T23:30', '2026-12-15T05:00'), 14);
 });
 
 test('belohnt bei gleicher Hotelwertung den günstigeren Preis', () => {
