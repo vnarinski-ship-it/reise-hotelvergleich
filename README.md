@@ -2,6 +2,8 @@
 
 Eine responsive, deutschsprachige Web-App für den persönlichen Vergleich von Pauschalreise-Hotels ab Nürnberg (NUE). Die App arbeitet ohne Server und speichert Gewichtungen sowie manuell übernommene Preisstände ausschließlich lokal im Browser.
 
+**Online-App:** <https://vnarinski-ship-it.github.io/reise-hotelvergleich/>
+
 ## Funktionen
 
 - 7 vorausgefüllte Hotels in Makadi Bay und Hurghada
@@ -64,3 +66,4 @@ Alle persönlichen Einstellungen und Preisstände liegen unter dem Schlüssel `r
 ## Rechtlicher Hinweis
 
 Die App umgeht keine Schutzmaßnahmen und liest keine Preise automatisiert von Reiseportalen aus. Für eine spätere Live-Preisanbindung dürfen ausschließlich freigegebene APIs, Partnerprogramme oder vertraglich erlaubte Datenfeeds verwendet werden.
+
