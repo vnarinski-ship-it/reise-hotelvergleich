@@ -29,7 +29,7 @@ export function rankHotels(hotels, weights, query = {}) {
   const max = Math.max(...priced.map(h => h.price.amount));
   return candidates.map(hotel => {
     const priceScore = hotel.price ? (max === min ? 10 : 10 - ((hotel.price.amount - min) / (max - min)) * 5) : 0;
-    return { ...hotel, score: hotel.rating * .75 + priceScore * .25 };
+    return { ...hotel, score: hotel.rating * .9 + priceScore * .1 };
   });
 }
 
