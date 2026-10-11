@@ -1,5 +1,5 @@
-import { hotels as seedHotels } from './data.js';
-import { criteria, rankHotels } from './core.js';
+import { hotels as seedHotels } from './data.js?v=2';
+import { criteria, rankHotels } from './core.js?v=2';
 
 const STORAGE_KEY = 'reisekompass-v1';
 const defaultWeights = Object.fromEntries(criteria.map(([key]) => [key, ['reef','wind','pool','couples','value'].includes(key) ? 5 : 3]));
