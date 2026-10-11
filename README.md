@@ -9,7 +9,7 @@ Eine responsive, deutschsprachige Web-App für den persönlichen Vergleich von P
 - 8 vorausgefüllte Hotels in Makadi Bay, Sahl Hasheesh und Hurghada
 - individuelle Gewichtung von 11 Hotelkriterien (0–5)
 - transparente Rangliste: gewichtete Hotelbewertung (75 %) + Preiswert (25 %)
-- Filter für Zeitraum, Flugzeiten, Reisedauer, Gesamtpreis und Veranstalter
+- Filter für Reisezeitraum (von/bis), Flugzeiten, Gesamtpreis und Veranstalter
 - manuelle Erfassung von Angeboten inklusive Preisquelle, Flugdaten, Transfer, Veranstalter und Erfassungsdatum
 - Suchlinks für CHECK24 und ab-in-den-urlaub – ohne automatisiertes Scraping
 - Detailansicht mit Kriterienprofil und Preisverlauf
