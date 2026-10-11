@@ -66,7 +66,7 @@
   <dialog id="detailDialog" class="dialog"><div id="detailContent"></div></dialog>
   <dialog id="priceDialog" class="dialog compact">
     <form id="priceForm" method="dialog">
-      <div class="dialog-head"><div><p class="eyebrow dark">Manueller Preisstand</p><h2>Angebot speichern</h2></div><button class="icon-button" value="cancel" aria-label="Schließen">×</button></div>
+      <div class="dialog-head"><div><p class="eyebrow dark">Manueller Preisstand</p><h2>Angebot speichern</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Schließen">×</button></div>
       <p class="hint">Übernimm ein gefundenes Angebot manuell. Die Quelle und das Erfassungsdatum werden mitgespeichert.</p>
       <label>Hotel<select id="priceHotel" required></select></label>
       <div class="form-grid">
@@ -77,10 +77,11 @@
         <label>Transfer<input id="transfer" placeholder="z. B. inklusive, 35 Min."></label>
         <label>Veranstalter<input id="operator" placeholder="z. B. TUI" required></label>
       </div>
-      <div class="dialog-actions"><button class="button ghost" value="cancel">Abbrechen</button><button class="button primary" id="savePrice" value="default">Preisstand speichern</button></div>
+      <div class="dialog-actions"><button class="button ghost" type="button" data-close-dialog>Abbrechen</button><button class="button primary" id="savePrice" type="submit">Preisstand speichern</button></div>
     </form>
   </dialog>
   <div id="toast" class="toast" role="status"></div>
   <script type="module" src="app.js"></script>
 </body>
 </html>
+
