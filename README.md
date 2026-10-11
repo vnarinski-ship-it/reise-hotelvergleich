@@ -6,7 +6,7 @@ Eine responsive, deutschsprachige Web-App für den persönlichen Vergleich von P
 
 ## Funktionen
 
-- 7 vorausgefüllte Hotels in Makadi Bay und Hurghada
+- 8 vorausgefüllte Hotels in Makadi Bay, Sahl Hasheesh und Hurghada
 - individuelle Gewichtung von 11 Hotelkriterien (0–5)
 - transparente Rangliste: gewichtete Hotelbewertung (75 %) + Preiswert (25 %)
 - Filter für Zeitraum, Flugzeiten, Reisedauer, Gesamtpreis und Veranstalter
