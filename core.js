@@ -19,14 +19,7 @@ export function bestPrice(prices, query = {}) {
     .filter(p => !query.returnBefore || p.inbound.slice(11, 16) <= query.returnBefore)
     .filter(p => !query.dateFrom || p.outbound.slice(0, 10) >= query.dateFrom)
     .filter(p => !query.dateTo || p.inbound.slice(0, 10) <= query.dateTo)
-    .filter(p => !query.duration || tripNights(p.outbound, p.inbound) === Number(query.duration))
     .sort((a, b) => a.amount - b.amount)[0] || null;
-}
-
-export function tripNights(outbound, inbound) {
-  const [outYear, outMonth, outDay] = outbound.slice(0, 10).split('-').map(Number);
-  const [inYear, inMonth, inDay] = inbound.slice(0, 10).split('-').map(Number);
-  return Math.round((Date.UTC(inYear, inMonth - 1, inDay) - Date.UTC(outYear, outMonth - 1, outDay)) / 86400000);
 }
 
 export function rankHotels(hotels, weights, query = {}) {
