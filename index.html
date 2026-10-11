@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b5d59">
+  <meta name="description" content="Persönlicher Hotelvergleich für Pauschalreisen ab Nürnberg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>ReiseKompass – Hotelvergleich</title>
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav shell" aria-label="Hauptnavigation">
+      <a class="brand" href="#top" aria-label="ReiseKompass Startseite"><span>R</span> ReiseKompass</a>
+      <div class="nav-actions">
+        <button class="button ghost" id="resetButton" type="button">Zurücksetzen</button>
+        <button class="button light" id="openPricesButton" type="button">Preis eintragen</button>
+      </div>
+    </nav>
+    <div class="hero-copy shell" id="top">
+      <p class="eyebrow">Dein persönlicher Vergleich</p>
+      <h1>Welches Hotel passt<br><em>wirklich</em> zu euch?</h1>
+      <p class="lead">Bewertungen gewichten, Angebote festhalten und die beste Reise ab Nürnberg transparent vergleichen.</p>
+      <div class="trust-row" aria-label="Vorteile">
+        <span>✓ Lokal gespeichert</span><span>✓ Ohne Preisscraping</span><span>✓ Nachvollziehbare Rangliste</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="shell main-layout">
+    <aside class="filters card" aria-label="Reisefilter">
+      <div class="section-heading">
+        <div><p class="eyebrow dark">Eure Reise</p><h2>Suchprofil</h2></div>
+        <span class="airport">NUE</span>
+      </div>
+      <div class="form-grid">
+        <label>Früheste Hinreise<input id="dateFrom" type="date"></label>
+        <label>Späteste Rückreise<input id="dateTo" type="date"></label>
+        <label>Frühester Abflug<input id="departureAfter" type="time" value="06:00"></label>
+        <label>Späteste Rückkehr<input id="returnBefore" type="time" value="23:59"></label>
+        <label>Reisedauer<select id="duration"><option value="7">7 Nächte</option><option value="10">10 Nächte</option><option value="14" selected>14 Nächte</option></select></label>
+        <label>Reisende<input value="2 Erwachsene" disabled></label>
+        <label>Max. Gesamtpreis<input id="maxPrice" type="number" min="0" step="50" placeholder="z. B. 3000 €"></label>
+        <label>Veranstalter<input id="operatorFilter" type="search" placeholder="Alle Veranstalter"></label>
+      </div>
+      <label class="check"><input id="onlyPrices" type="checkbox"> Nur Hotels mit Preisstand</label>
+
+      <div class="weights-header"><div><p class="eyebrow dark">Was zählt?</p><h2>Kriterien gewichten</h2></div><span>0–5</span></div>
+      <p class="hint">5 = besonders wichtig · 0 = ohne Einfluss</p>
+      <div id="weights" class="weights"></div>
+    </aside>
+
+    <section class="results" aria-live="polite">
+      <div class="results-top">
+        <div><p class="eyebrow dark">Rangliste</p><h2><span id="resultCount">7</span> Hotels im Vergleich</h2></div>
+        <label class="sort-label">Sortieren<select id="sort"><option value="score">Beste Empfehlung</option><option value="price">Preis aufsteigend</option><option value="rating">Hotelbewertung</option></select></label>
+      </div>
+      <div class="score-note">Die Empfehlung kombiniert eure Gewichtung (75 %) mit dem günstigsten gespeicherten Preis (25 %).</div>
+      <div id="hotelList" class="hotel-list"></div>
+      <div id="emptyState" class="empty card" hidden><h3>Kein Hotel passt zu diesen Filtern.</h3><p>Erhöhe den Maximalpreis oder zeige Hotels ohne Preisstand an.</p></div>
+    </section>
+  </main>
+
+  <dialog id="detailDialog" class="dialog"><div id="detailContent"></div></dialog>
+  <dialog id="priceDialog" class="dialog compact">
+    <form id="priceForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow dark">Manueller Preisstand</p><h2>Angebot speichern</h2></div><button class="icon-button" value="cancel" aria-label="Schließen">×</button></div>
+      <p class="hint">Übernimm ein gefundenes Angebot manuell. Die Quelle und das Erfassungsdatum werden mitgespeichert.</p>
+      <label>Hotel<select id="priceHotel" required></select></label>
+      <div class="form-grid">
+        <label>Quelle<select id="priceSource"><option>CHECK24</option><option>ab-in-den-urlaub</option><option>Andere</option></select></label>
+        <label>Gesamtpreis für 2 (€)<input id="priceAmount" type="number" min="1" required></label>
+        <label>Hinflug<input id="outbound" type="datetime-local" required></label>
+        <label>Rückflug<input id="inbound" type="datetime-local" required></label>
+        <label>Transfer<input id="transfer" placeholder="z. B. inklusive, 35 Min."></label>
+        <label>Veranstalter<input id="operator" placeholder="z. B. TUI" required></label>
+      </div>
+      <div class="dialog-actions"><button class="button ghost" value="cancel">Abbrechen</button><button class="button primary" id="savePrice" value="default">Preisstand speichern</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
