@@ -1,4 +1,4 @@
-const CACHE='reisekompass-v2';
+const CACHE='reisekompass-v3';
 const ASSETS=['./','./index.html','./styles.css','./app.js','./core.js','./data.js','./manifest.webmanifest','./icon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key))))));
