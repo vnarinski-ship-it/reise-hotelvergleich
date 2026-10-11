@@ -63,7 +63,11 @@ function showDetail(id) {
   $('#detailDialog').showModal();
 }
 
-function openPriceDialog(id='') { $('#priceHotel').value = id; $('#priceDialog').showModal(); }
+function openPriceDialog(id='') {
+  if (id) $('#priceHotel').value = id;
+  else $('#priceHotel').selectedIndex = 0;
+  $('#priceDialog').showModal();
+}
 
 function savePrice(event) {
   event.preventDefault();
