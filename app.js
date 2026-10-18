@@ -1,4 +1,4 @@
-import { hotels as seedHotels } from './data.js?v=5';
+import { hotels as seedHotels } from './data.js?v=6';
 import { criteria, rankHotels } from './core.js?v=4';
 
 const STORAGE_KEY = 'reisekompass-v1';
