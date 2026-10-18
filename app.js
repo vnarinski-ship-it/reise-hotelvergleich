@@ -1,4 +1,4 @@
-import { hotels as seedHotels } from './data.js?v=3';
+import { hotels as seedHotels } from './data.js?v=4';
 import { criteria, rankHotels } from './core.js?v=4';
 
 const STORAGE_KEY = 'reisekompass-v1';
@@ -50,7 +50,7 @@ function uberMorningBlock(hotel) {
     <strong>🚕 Uber ca. 07:10 Uhr</strong>
     <span><b>Verfügbarkeit:</b> ${info.availability}</span>
     <span><b>Suche/Warten:</b> ${info.searchWait}</span>
-    <span><b>Bis Abholpunkt:</b> ${info.pickupWalk}</span>
+    <span><b>Hotel → Uber-Abholpunkt:</b> ${info.pickupDistanceKm} · ${info.pickupWalk}</span>
     <span><b>Abholpunkt:</b> ${info.pickupPoint}</span>
   </div>`;
 }
