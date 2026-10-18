@@ -25,9 +25,12 @@ function renderWeights() {
 
 function renderHotels() {
   let ranked = rankHotels(hotels(), state.weights, query());
-  if ($('#onlyPrices').checked) ranked = ranked.filter(h => h.price);
+  if ($('#onlyPrices').checked) ranked = ranked.filter(h => h.price || h.prices.length);
   const sort = $('#sort').value;
-  ranked.sort(sort === 'price' ? (a,b) => (a.price?.amount ?? Infinity)-(b.price?.amount ?? Infinity) : sort === 'rating' ? (a,b) => b.rating-a.rating : (a,b) => b.score-a.score);
+  ranked.sort(sort === 'price'
+    ? (a,b) => ((a.price?.amount ?? latestStoredPrice(a)?.amount ?? Infinity) - (b.price?.amount ?? latestStoredPrice(b)?.amount ?? Infinity))
+    : sort === 'rating' ? (a,b) => b.rating-a.rating
+    : (a,b) => b.score-a.score);
   $('#resultCount').textContent = ranked.length;
   $('#emptyState').hidden = ranked.length > 0;
   $('#hotelList').innerHTML = ranked.map((hotel,index) => hotelCard(hotel,index)).join('');
@@ -35,13 +38,18 @@ function renderHotels() {
   document.querySelectorAll('[data-add-price]').forEach(button => button.addEventListener('click', () => openPriceDialog(button.dataset.addPrice)));
 }
 
+function latestStoredPrice(hotel) {
+  if (!hotel.prices?.length) return null;
+  return [...hotel.prices].sort((a,b) => new Date(b.savedAt) - new Date(a.savedAt))[0];
+}
+
 function hotelCard(hotel,index) {
   const score = Math.round(hotel.score * 10);
-  const storedCount = hotel.prices.length;
+  const latest = latestStoredPrice(hotel);
   const source = hotel.price
     ? `<div class="price"><small>${hotel.price.source} · ${hotel.price.operator}</small><strong>${euro.format(hotel.price.amount)}</strong><span>gesamt für 2 · Stand ${new Date(hotel.price.savedAt).toLocaleDateString('de-DE')}</span></div>`
-    : storedCount
-      ? `<div class="price filtered"><small>${storedCount} Preisstand${storedCount === 1 ? '' : 'e'} gespeichert</small><strong>Durch Filter ausgeblendet</strong><button class="text-button" data-detail="${hotel.id}">Preisstand ansehen →</button></div>`
+    : latest
+      ? `<div class="price filtered"><small>Letzter gespeicherter Preis · ${latest.source}${latest.operator ? ` · ${latest.operator}` : ''}</small><strong>${euro.format(latest.amount)}</strong><span>gesamt für 2 · Stand ${new Date(latest.savedAt).toLocaleDateString('de-DE')}</span><button class="text-button" data-detail="${hotel.id}">Preisdetails ansehen →</button></div>`
       : `<div class="price missing"><small>Noch kein Angebot</small><strong>Preis fehlt</strong><button class="text-button" data-add-price="${hotel.id}">Jetzt eintragen →</button></div>`;
   return `<article class="hotel-card card">
     <div class="rank ${index < 3 ? 'top' : ''}">${index+1}</div>
@@ -79,7 +87,7 @@ function savePrice(event) {
   state.prices[id] = [...(state.prices[id] || []), entry];
   persist(); $('#priceDialog').close(); $('#priceForm').reset(); renderHotels();
   const isVisible = rankHotels(hotels(), state.weights, query()).find(hotel => hotel.id === id)?.price;
-  toast(isVisible ? 'Preisstand wurde lokal gespeichert.' : 'Preisstand gespeichert – die aktiven Suchfilter blenden ihn aus.');
+  toast(isVisible ? 'Preisstand wurde lokal gespeichert.' : 'Preisstand gespeichert – auf der Karte wird immer der letzte Preis gezeigt.');
 }
 
 function toast(message) { $('#toast').textContent=message; $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2800); }
@@ -93,4 +101,3 @@ document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEve
 $('#resetButton').addEventListener('click',()=>{ if(confirm('Gewichtungen und gespeicherte Preise wirklich zurücksetzen?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }});
 document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); }));
 if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
-
