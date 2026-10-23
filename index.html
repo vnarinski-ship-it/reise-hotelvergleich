@@ -7,7 +7,7 @@
   <meta name="description" content="Persönlicher Hotelvergleich für Pauschalreisen ab Nürnberg">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
   <title>ReiseKompass – Hotelvergleich</title>
 </head>
 <body>
@@ -18,6 +18,7 @@
         <button class="button ghost" id="menuButton" type="button" aria-haspopup="menu" aria-expanded="false">☰ Menü</button>
         <div class="menu-panel" id="menuPanel" hidden>
           <button type="button" id="openDiveCenters">🤿 Tauchbasen</button>
+          <button type="button" id="openDiveCards">🪪 Meine Tauchscheine</button>
         </div>
         <button class="button ghost" id="resetButton" type="button">Zurücksetzen</button>
         <button class="button light" id="openPricesButton" type="button">Preis eintragen</button>
@@ -74,6 +75,16 @@
       <div id="diveCentersList" class="dive-centers-list"></div>
     </div>
   </dialog>
+
+  <dialog id="diveCardsDialog" class="dialog dive-cards-dialog">
+    <div>
+      <div class="dialog-head"><div><p class="eyebrow dark">Persönliche Unterlagen</p><h2>🪪 Meine Tauchscheine</h2></div><button class="icon-button" type="button" data-close-dive-cards aria-label="Schließen">×</button></div>
+      <p class="hint">Brevets und Mitgliedskarte. Die Daten kannst du direkt für E-Mails kopieren. Kartenfotos werden nur auf diesem Gerät gespeichert.</p>
+      <div class="dive-cards-toolbar"><button class="button primary" id="copyAllDiveData" type="button">📋 Alle Daten kopieren</button></div>
+      <div id="diveCardsList" class="dive-cards-list"></div>
+    </div>
+  </dialog>
+
   <dialog id="priceDialog" class="dialog compact">
     <form id="priceForm" method="dialog">
       <div class="dialog-head"><div><p class="eyebrow dark">Manueller Preisstand</p><h2>Angebot speichern</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Schließen">×</button></div>
@@ -92,5 +103,6 @@
   </dialog>
   <div id="toast" class="toast" role="status"></div>
   <script type="module" src="app.js?v=13"></script>
+  <script type="module" src="cards.js?v=1"></script>
 </body>
 </html>
