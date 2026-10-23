@@ -7,7 +7,7 @@
   <meta name="description" content="Persönlicher Hotelvergleich für Pauschalreisen ab Nürnberg">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
   <title>ReiseKompass – Hotelvergleich</title>
 </head>
 <body>
@@ -15,6 +15,10 @@
     <nav class="nav shell" aria-label="Hauptnavigation">
       <a class="brand" href="#top" aria-label="ReiseKompass Startseite"><span>R</span> ReiseKompass</a>
       <div class="nav-actions">
+        <button class="button ghost" id="menuButton" type="button" aria-haspopup="menu" aria-expanded="false">☰ Menü</button>
+        <div class="menu-panel" id="menuPanel" hidden>
+          <button type="button" id="openDiveCenters">🤿 Tauchbasen</button>
+        </div>
         <button class="button ghost" id="resetButton" type="button">Zurücksetzen</button>
         <button class="button light" id="openPricesButton" type="button">Preis eintragen</button>
       </div>
@@ -63,6 +67,13 @@
   </main>
 
   <dialog id="detailDialog" class="dialog"><div id="detailContent"></div></dialog>
+  <dialog id="diveCentersDialog" class="dialog dive-dialog">
+    <div>
+      <div class="dialog-head"><div><p class="eyebrow dark">Makadi Bay</p><h2>🤿 Tauchbasen</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Schließen">×</button></div>
+      <p class="hint">Nahe Siva Golden Bay Makadi. Telefon und E-Mail sind direkt antippbar.</p>
+      <div id="diveCentersList" class="dive-centers-list"></div>
+    </div>
+  </dialog>
   <dialog id="priceDialog" class="dialog compact">
     <form id="priceForm" method="dialog">
       <div class="dialog-head"><div><p class="eyebrow dark">Manueller Preisstand</p><h2>Angebot speichern</h2></div><button class="icon-button" type="button" data-close-dialog aria-label="Schließen">×</button></div>
@@ -80,6 +91,6 @@
     </form>
   </dialog>
   <div id="toast" class="toast" role="status"></div>
-  <script type="module" src="app.js?v=12"></script>
+  <script type="module" src="app.js?v=13"></script>
 </body>
 </html>
