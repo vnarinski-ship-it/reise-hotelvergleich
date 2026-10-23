@@ -6,6 +6,59 @@ const defaultWeights = Object.fromEntries(criteria.map(([key]) => [key, ['reef',
 const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
 let state = { weights: {...defaultWeights, ...(saved.weights || {})}, prices: saved.prices || {} };
 
+const diveCenters = [
+  {
+    name:'Scuba World Divers Makadi Bay',
+    location:'Madinat Makadi / Jaz Makadina',
+    phone:'+20 102 228 8483',
+    phoneHref:'+201022288483',
+    email:'info@scubaworlddivers.com',
+    distance:'ca. 3–4 km vom Siva Golden Bay',
+    pickup:'Kostenloser Transfer von Hotels in Makadi Bay',
+    note:'Du warst bereits 2018 bei Scuba World Divers (Membership #4036). Repeater-/Online-Rabatt vor Buchung prüfen.'
+  },
+  {
+    name:'Aquarius Diving Club Makadi Bay',
+    location:'Grand Waterworld Resort / Grand Makadi',
+    phone:'+20 100 160 0742',
+    phoneHref:'+201001600742',
+    email:'reservation@aquariusredsea.com',
+    distance:'ca. 2–4 km vom Siva Golden Bay',
+    pickup:'Hotelabholung in Makadi Bay verfügbar; Preis vorher bestätigen',
+    note:'Preislich besonders interessant für 3 bzw. 5 Tauchtage.'
+  },
+  {
+    name:'Master Diving Center Makadi',
+    location:'Serenity & Fun City Hotel Makadi',
+    phone:'+20 115 084 0555',
+    phoneHref:'+201150840555',
+    email:'info@masterdivingcenter.com',
+    distance:'direkt neben dem Siva / etwa 0,2 km',
+    pickup:'Wegen der Nähe zuerst direkt anfragen',
+    note:'Für dich voraussichtlich die bequemste Basis, falls der Paketpreis passt.'
+  },
+  {
+    name:'Extra Divers Makadi Bay',
+    location:'Cleopatra Luxury Resort Makadi Bay',
+    phone:'+20 122 156 3305',
+    phoneHref:'+201221563305',
+    email:'makadibay@extradivers.org',
+    distance:'ca. 4–5 km vom Siva Golden Bay',
+    pickup:'Transfer in der Makadi-Bucht verfügbar; Siva konkret bestätigen',
+    note:'Hausriff- und Bootstauchgänge; Nitrox verfügbar.'
+  },
+  {
+    name:'IDive Diving Center',
+    location:'Fort Arabesque Resort, Makadi Bay',
+    phone:'+20 122 737 5820',
+    phoneHref:'+201227375820',
+    email:'idive@idivedivingcenter.com',
+    distance:'ca. 4 km vom Siva Golden Bay',
+    pickup:'Transfer vorab mit der Basis abstimmen',
+    note:'PADI 5★ / ECO Center; sehr gutes Hausriff, preislich meist höher als Aquarius/Scuba World.'
+  }
+];
+
 const $ = selector => document.querySelector(selector);
 const euro = new Intl.NumberFormat('de-DE', {style:'currency', currency:'EUR', maximumFractionDigits:0});
 const date = new Intl.DateTimeFormat('de-DE', {dateStyle:'short', timeStyle:'short'});
@@ -21,6 +74,18 @@ function renderWeights() {
     $('#sort').value = 'score';
     persist(); renderHotels();
   }));
+}
+
+function renderDiveCenters() {
+  $('#diveCentersList').innerHTML = diveCenters.map(center => `<article class="dive-center-card">
+    <div class="dive-center-head"><div><h3>${center.name}</h3><p>${center.location}</p></div></div>
+    <div class="dive-contact-grid">
+      <a href="tel:${center.phoneHref}">📞 <span><small>Telefon / WhatsApp</small><strong>${center.phone}</strong></span></a>
+      <a href="mailto:${center.email}">✉️ <span><small>E-Mail</small><strong>${center.email}</strong></span></a>
+    </div>
+    <div class="dive-facts"><span><b>📍 Entfernung:</b> ${center.distance}</span><span><b>🚐 Abholung:</b> ${center.pickup}</span></div>
+    <p class="dive-note">${center.note}</p>
+  </article>`).join('');
 }
 
 function renderHotels() {
@@ -118,11 +183,31 @@ function savePrice(event) {
 function toast(message) { $('#toast').textContent=message; $('#toast').classList.add('show'); setTimeout(()=>$('#toast').classList.remove('show'),2800); }
 
 $('#priceHotel').innerHTML = seedHotels.map(h=>`<option value="${h.id}">${h.name}</option>`).join('');
-renderWeights(); renderHotels();
+renderWeights();
+renderDiveCenters();
+renderHotels();
 document.querySelectorAll('.filters input, .filters select, #sort').forEach(el => el.addEventListener('input', renderHotels));
 $('#openPricesButton').addEventListener('click',()=>openPriceDialog());
 $('#priceForm').addEventListener('submit',savePrice);
 document.querySelectorAll('[data-close-dialog]').forEach(button => button.addEventListener('click', () => button.closest('dialog').close()));
 $('#resetButton').addEventListener('click',()=>{ if(confirm('Gewichtungen und gespeicherte Preise wirklich zurücksetzen?')) { localStorage.removeItem(STORAGE_KEY); location.reload(); }});
+
+$('#menuButton').addEventListener('click', () => {
+  const panel = $('#menuPanel');
+  panel.hidden = !panel.hidden;
+  $('#menuButton').setAttribute('aria-expanded', String(!panel.hidden));
+});
+$('#openDiveCenters').addEventListener('click', () => {
+  $('#menuPanel').hidden = true;
+  $('#menuButton').setAttribute('aria-expanded','false');
+  $('#diveCentersDialog').showModal();
+});
+document.addEventListener('click', event => {
+  if (!event.target.closest('.nav-actions')) {
+    $('#menuPanel').hidden = true;
+    $('#menuButton').setAttribute('aria-expanded','false');
+  }
+});
+
 document.querySelectorAll('dialog').forEach(dialog => dialog.addEventListener('click', e => { if (e.target === dialog) dialog.close(); }));
 if ('serviceWorker' in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js'));
