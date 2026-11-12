@@ -1,4 +1,5 @@
 import { hotels } from './data.js?v=6';
+import { openProofreading } from './proofreading.js?v=1';
 
 export const HOTEL_NOTES_KEY = 'reisekompass-hotel-notes-v1';
 let current = null;
@@ -14,6 +15,7 @@ dialog.innerHTML = `<div>
   <p class="hotel-note-help">Änderungen werden auf diesem Gerät gespeichert. Diktat benötigt einen unterstützten Browser und eine Mikrofonfreigabe. Je nach Sprachdienst wird Audio online verarbeitet.</p>
   <div id="hotelNoteSpeechControls" class="dialog-actions" hidden><button type="button" class="button primary" id="hotelNoteStop">Fertig gesprochen</button><button type="button" class="button ghost" id="hotelNoteCancel">Diktat abbrechen</button></div>
   <p id="hotelNotePreview" aria-live="polite"></p><div id="hotelNoteAlternatives"></div>
+  <button type="button" class="button ghost" id="hotelNoteCorrect">✦ Sprache korrigieren</button><div id="hotelNoteHistory"></div>
   <p id="hotelNoteStatus" role="status" aria-live="polite"></p>
   <div class="dialog-actions"><button type="button" class="button ghost" id="hotelNoteCopy">Text kopieren</button><button type="button" class="button primary" id="hotelNoteDone">Speichern & schließen</button></div>
 </div>`;
@@ -27,19 +29,26 @@ function readNotes() {
   if (!notes || typeof notes !== 'object' || Array.isArray(notes) || Object.values(notes).some(note => !note || typeof note.text !== 'string')) throw new Error('Ungültiger Notizenspeicher');
   return notes;
 }
+const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+export function hotelNotesBlock(id) {
+  let text = ''; try { text = readNotes()[id]?.text || ''; } catch {}
+  return `<section class="hotel-personal-note" data-hotel-notes-display="${escapeHTML(id)}" ${text.trim() ? '' : 'hidden'}><h4>Meine Notizen</h4><p>${escapeHTML(text)}</p></section>`;
+}
 export function hotelNoteLabel(id) {
   try { return readNotes()[id]?.text.trim() ? '📝 Notizen bearbeiten' : '📝 Notizen'; }
   catch { return '📝 Notizen'; }
 }
 function updateButtons() {
+  let notes = {}; try { notes = readNotes(); } catch {}
+  for (const block of document.querySelectorAll('[data-hotel-notes-display]')) { const text = notes[block.dataset.hotelNotesDisplay]?.text || ''; block.hidden = !text.trim(); block.querySelector('p').textContent = text; }
   for (const button of document.querySelectorAll('[data-hotel-note]')) button.textContent = hotelNoteLabel(button.dataset.hotelNote);
 }
-function save() {
+function save(previousText) {
   if (!current) return false;
   try {
     const notes = readNotes();
-    if ((notes[current.id]?.text || '') !== field.value) {
-      if (field.value) notes[current.id] = { text: field.value, updatedAt: new Date().toISOString() };
+    if ((notes[current.id]?.text || '') !== field.value || (previousText !== undefined && notes[current.id]?.previousText !== previousText)) {
+      if (field.value) notes[current.id] = { ...notes[current.id], ...(previousText === undefined ? {} : {previousText}), text: field.value, updatedAt: new Date().toISOString() };
       else delete notes[current.id];
       localStorage.setItem(HOTEL_NOTES_KEY, JSON.stringify(notes));
     }
@@ -54,6 +63,8 @@ function save() {
 function speechUI() {
   field.readOnly = !!recording;
   el('hotelNoteDictate').disabled = !!recording;
+  el('hotelNoteCorrect').disabled = !!recording;
+  const restore = el('hotelNoteHistory').querySelector('button'); if (restore) restore.disabled = !!recording;
   el('hotelNoteSpeechControls').hidden = !recording;
 }
 function cancelSpeech(message = 'Diktat abgebrochen. Vorhandener Text bleibt erhalten.') {
@@ -81,7 +92,7 @@ export function openHotelNotes(id) {
   el('hotelNotePreview').textContent = '';
   try { field.value = readNotes()[id]?.text || ''; status('Notizen nur für dieses Hotel · automatische lokale Speicherung'); }
   catch { status('Die gespeicherten Notizen konnten nicht gelesen werden. Bitte Browserdaten nicht löschen. Du kannst vorhandenen Text über „Text kopieren“ sichern.'); }
-  speechUI();
+  speechUI(); renderHistory();
   dialog.showModal();
 }
 function startSpeech() {
@@ -163,6 +174,24 @@ function startSpeech() {
   session.timer = setTimeout(() => cancelSpeech('Das Mikrofon antwortet nicht. Bitte Freigabe prüfen und erneut versuchen.'), 12000);
   try { recognition.start(); } catch { cancelSpeech('Mikrofon konnte nicht starten. Bitte erneut versuchen.'); }
 }
+function renderHistory() {
+  const area = el('hotelNoteHistory'); area.replaceChildren();
+  let previous; try { previous = readNotes()[current?.id]?.previousText; } catch {}
+  if (typeof previous !== 'string') return;
+  const details = document.createElement('details'), heading = document.createElement('summary'), text = document.createElement('p'), restore = document.createElement('button');
+  heading.textContent = 'Vorherige Fassung'; text.textContent = previous; restore.type = 'button'; restore.className = 'button ghost'; restore.textContent = 'Diese Fassung wiederherstellen'; restore.disabled = !!recording;
+  restore.onclick = () => { const before = field.value; field.value = previous; if (save(before)) renderHistory(); else field.value = before; };
+  details.append(heading, text, restore); area.append(details);
+}
+el('hotelNoteCorrect').onclick = () => {
+  if (recording || !save()) return;
+  const owner = current, before = field.value;
+  const hotel = hotels.find(hotel => hotel.id === owner.id);
+  openProofreading({text:before, protectedTerms:hotel.name.split(/[\s/-]+/), report:status,
+    isCurrent:() => current === owner && dialog.open && field.value === before,
+    apply:value => { field.value = value; if (!save(before)) { field.value = before; return false; } el('hotelNoteAlternatives').replaceChildren(); renderHistory(); return true; }
+  });
+};
 field.addEventListener('input', () => { el('hotelNoteAlternatives').replaceChildren(); save(); });
 el('hotelNoteDictate').onclick = startSpeech;
 el('hotelNoteStop').onclick = () => { if (recording) try { recording.recognition.stop(); } catch { cancelSpeech(); } };
@@ -179,3 +208,5 @@ dialog.addEventListener('close', () => { if (!dialog.open) { cancelSpeech(); cur
 window.addEventListener('pagehide', () => { if (dialog.open) { cancelSpeech(); save(); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden && recording?.started) cancelSpeech(); });
 document.addEventListener('click', event => { const button = event.target.closest('[data-hotel-note]'); if (button) openHotelNotes(button.dataset.hotelNote); });
+
+window.addEventListener('storage', event => { if (event.key === HOTEL_NOTES_KEY) updateButtons(); });

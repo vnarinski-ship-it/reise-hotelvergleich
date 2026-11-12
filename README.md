@@ -13,7 +13,8 @@ Eine responsive, deutschsprachige Web-App für den persönlichen Vergleich von P
 - manuelle Erfassung von Angeboten inklusive Preisquelle, Flugdaten, Transfer, Veranstalter und Erfassungsdatum
 - Suchlinks für CHECK24 und ab-in-den-urlaub – ohne automatisiertes Scraping
 - Detailansicht mit Kriterienprofil und Preisverlauf
-- eigene Hotelnotizen direkt auf jeder Karte und in den Details, mit automatischer lokaler Speicherung
+- eigene Hotelnotizen mit automatischer lokaler Speicherung, direkt bei den Hotelinformationen auf Karten und in den Details sichtbar
+- einfache deutsche Grammatik- und Rechtschreibprüfung ohne eigenen API-Schlüssel, mit Vorschau und wiederherstellbarer vorheriger Fassung
 - deutsches Diktat am Cursor mit Vorschau, Stopp/Abbruch und Erkennungsalternativen (bei Browser-Unterstützung)
 - lokale Speicherung per `localStorage`
 - responsive Darstellung und PWA-Grundlage mit Manifest und Offline-Cache
@@ -54,6 +55,10 @@ Der Browsertest startet seinen lokalen Webserver selbst. Ein vorhandenes Chromiu
 Alle persönlichen Einstellungen und Preisstände liegen unter dem Schlüssel `reisekompass-v1` im lokalen Browserspeicher. Hotelnotizen liegen getrennt unter `reisekompass-hotel-notes-v1` und bleiben beim Zurücksetzen der Gewichtungen und Preise erhalten. Notizen werden nur im verwendeten Browser gespeichert. Bei fehlendem Speicherplatz bleibt der ungespeicherte Text im Editor und kann kopiert werden.
 
 Der Diktierknopf fordert `de-DE` beim verfügbaren Browser-Sprachdienst an. Die Unterstützung hängt von Browser und Gerät ab; je nach Dienst kann Audio online verarbeitet werden. Alternativ kann das Mikrofon der Handy-Tastatur verwendet werden. Es gibt keine eigene Audioablage und keine eigene API-Anbindung für das Diktat.
+
+„Sprache korrigieren“ öffnet eine Vorschau. Erst „Grammatik prüfen“ sendet ausschließlich den aktuellen Notiztext an die öffentliche LanguageTool-API (`https://api.languagetool.org/v2/check`) mit `language=de-DE`; es werden weder Hotel-Stammdaten, Preisstände noch Tauchdaten mitgesendet. Die Prüfung braucht Internet, aber keinen eigenen Schlüssel. Zeitlimits, Ausfälle und Nutzungslimits werden angezeigt. Korrekturen sind einzeln abwählbar und der Vorschlag ist bearbeitbar. Hotelbezeichnungen werden nicht automatisch ersetzt. Übernommen wird erst nach Bestätigung; die unmittelbar vorherige Textfassung bleibt im Notizdatensatz erhalten und wiederherstellbar. Dies ist eine einfache Grammatikprüfung, keine freie KI-Neuformulierung.
+
+Notiztexte erscheinen als reiner Text mit erhaltenen Zeilenumbrüchen bei den Hotelinformationen. HTML in einer Notiz wird nicht ausgeführt. Browserprüfungen simulieren LanguageTool-Antworten einschließlich Fehlern, Abbruch, Zeitlimit und Speicherfehlern; der Dienst wurde zusätzlich mit einem synthetischen Beispielsatz auf Erreichbarkeit und CORS geprüft.
 
 Es werden keine Nutzerdaten an einen eigenen Server übertragen. Externe Reiseportale öffnen sich nur nach einem bewussten Klick. Da sich URL-Strukturen externer Anbieter ändern können, sind die Links als Suchhilfe und nicht als garantierte Buchungs-Deeplinks zu verstehen.
 
