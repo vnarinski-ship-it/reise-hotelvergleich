@@ -1,5 +1,6 @@
 import { hotels as seedHotels } from './data.js?v=6';
 import { criteria, rankHotels } from './core.js?v=4';
+import { hotelNoteLabel } from './hotel-notes.js?v=1';
 
 const STORAGE_KEY = 'reisekompass-v1';
 const defaultWeights = Object.fromEntries(criteria.map(([key]) => [key, ['reef','wind','pool','couples','value'].includes(key) ? 5 : 3]));
@@ -146,7 +147,7 @@ function hotelCard(hotel,index) {
     <div class="hotel-main"><div class="hotel-meta"><span>${'★'.repeat(hotel.stars)}</span> ${hotel.area}</div><h3>${hotel.name}</h3><p>${hotel.summary}</p><div class="tags">${hotel.tags.map(t=>`<span>${t}</span>`).join('')}</div>${uberMorningBlock(hotel)}${divingBlock(hotel)}</div>
     <div class="match"><div class="score-ring" style="--score:${score}"><span>${score}</span><small>/100</small></div><strong>Euer Match</strong><span>Kriterien ${hotel.rating.toFixed(1)}/10</span></div>
     ${source}
-    <div class="card-actions"><button class="button ghost" data-detail="${hotel.id}">Details ansehen</button><a class="button primary" target="_blank" rel="noopener noreferrer" href="${searchLink('check24', hotel.name)}">Bei CHECK24 suchen ↗</a></div>
+    <div class="card-actions"><button class="button ghost" data-detail="${hotel.id}">Details ansehen</button><button type="button" class="button ghost" data-hotel-note="${hotel.id}">${hotelNoteLabel(hotel.id)}</button><a class="button primary" target="_blank" rel="noopener noreferrer" href="${searchLink('check24', hotel.name)}">Bei CHECK24 suchen ↗</a></div>
   </article>`;
 }
 
@@ -158,7 +159,7 @@ function searchLink(source, hotel) {
 
 function showDetail(id) {
   const hotel = hotels().find(h => h.id === id);
-  $('#detailContent').innerHTML = `<div class="dialog-head"><div><p class="eyebrow dark">${hotel.area} · ${hotel.stars} Sterne</p><h2>${hotel.name}</h2></div><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">×</button></div><p class="detail-summary">${hotel.summary}</p>${uberMorningBlock(hotel)}${divingBlock(hotel,true)}<div class="rating-grid">${criteria.map(([key,label])=>`<div><span>${label}</span><strong>${hotel.ratings[key]}/10</strong><i><b style="width:${hotel.ratings[key]*10}%"></b></i></div>`).join('')}</div><div class="price-history"><h3>Gespeicherte Preisstände</h3>${hotel.prices.length ? hotel.prices.sort((a,b)=>b.savedAt.localeCompare(a.savedAt)).map(p=>`<div><span><strong>${p.source}</strong><small>${p.operator} · ${p.transfer || 'Transfer k. A.'}</small></span><span><strong>${euro.format(p.amount)}</strong><small>${date.format(new Date(p.outbound))} – ${date.format(new Date(p.inbound))}</small></span></div>`).join('') : '<p>Noch keine Preisstände gespeichert.</p>'}</div><div class="dialog-actions"><a class="button ghost" target="_blank" rel="noopener noreferrer" href="${searchLink('ab',hotel.name)}">ab-in-den-urlaub ↗</a><button class="button primary" data-modal-price="${hotel.id}">Preis eintragen</button></div>`;
+  $('#detailContent').innerHTML = `<div class="dialog-head"><div><p class="eyebrow dark">${hotel.area} · ${hotel.stars} Sterne</p><h2>${hotel.name}</h2></div><button class="icon-button" onclick="this.closest('dialog').close()" aria-label="Schließen">×</button></div><p class="detail-summary">${hotel.summary}</p>${uberMorningBlock(hotel)}${divingBlock(hotel,true)}<div class="rating-grid">${criteria.map(([key,label])=>`<div><span>${label}</span><strong>${hotel.ratings[key]}/10</strong><i><b style="width:${hotel.ratings[key]*10}%"></b></i></div>`).join('')}</div><div class="price-history"><h3>Gespeicherte Preisstände</h3>${hotel.prices.length ? hotel.prices.sort((a,b)=>b.savedAt.localeCompare(a.savedAt)).map(p=>`<div><span><strong>${p.source}</strong><small>${p.operator} · ${p.transfer || 'Transfer k. A.'}</small></span><span><strong>${euro.format(p.amount)}</strong><small>${date.format(new Date(p.outbound))} – ${date.format(new Date(p.inbound))}</small></span></div>`).join('') : '<p>Noch keine Preisstände gespeichert.</p>'}</div><div class="dialog-actions"><button type="button" class="button ghost" data-hotel-note="${hotel.id}">${hotelNoteLabel(hotel.id)}</button><a class="button ghost" target="_blank" rel="noopener noreferrer" href="${searchLink('ab',hotel.name)}">ab-in-den-urlaub ↗</a><button class="button primary" data-modal-price="${hotel.id}">Preis eintragen</button></div>`;
   $('[data-modal-price]')?.addEventListener('click', () => { $('#detailDialog').close(); openPriceDialog(id); });
   $('#detailDialog').showModal();
 }

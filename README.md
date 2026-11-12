@@ -13,6 +13,8 @@ Eine responsive, deutschsprachige Web-App für den persönlichen Vergleich von P
 - manuelle Erfassung von Angeboten inklusive Preisquelle, Flugdaten, Transfer, Veranstalter und Erfassungsdatum
 - Suchlinks für CHECK24 und ab-in-den-urlaub – ohne automatisiertes Scraping
 - Detailansicht mit Kriterienprofil und Preisverlauf
+- eigene Hotelnotizen direkt auf jeder Karte und in den Details, mit automatischer lokaler Speicherung
+- deutsches Diktat am Cursor mit Vorschau, Stopp/Abbruch und Erkennungsalternativen (bei Browser-Unterstützung)
 - lokale Speicherung per `localStorage`
 - responsive Darstellung und PWA-Grundlage mit Manifest und Offline-Cache
 
@@ -37,9 +39,23 @@ npm run check
 
 Die Tests prüfen die Gewichtung, Preisfilterung und den Einfluss des Preises auf die Rangliste.
 
+Browserprüfungen für Hotelnotizen und den Offline-Cache (Node.js 20 oder neuer):
+
+```bash
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+Der Browsertest startet seinen lokalen Webserver selbst. Ein vorhandenes Chromium unter `/usr/bin/chromium` wird verwendet; alternativ lässt sich `CHROMIUM_PATH` setzen. Die Spracherkennung wird für wiederholbare Prüfungen simuliert. Echte Aufnahmequalität und Mikrofonfreigaben müssen im jeweiligen Browser getestet werden.
+
 ## Daten & Datenschutz
 
-Alle persönlichen Einstellungen und Preisstände liegen unter dem Schlüssel `reisekompass-v1` im lokalen Browserspeicher. Es werden keine Nutzerdaten an einen eigenen Server übertragen. Externe Reiseportale öffnen sich nur nach einem bewussten Klick. Da sich URL-Strukturen externer Anbieter ändern können, sind die Links als Suchhilfe und nicht als garantierte Buchungs-Deeplinks zu verstehen.
+Alle persönlichen Einstellungen und Preisstände liegen unter dem Schlüssel `reisekompass-v1` im lokalen Browserspeicher. Hotelnotizen liegen getrennt unter `reisekompass-hotel-notes-v1` und bleiben beim Zurücksetzen der Gewichtungen und Preise erhalten. Notizen werden nur im verwendeten Browser gespeichert. Bei fehlendem Speicherplatz bleibt der ungespeicherte Text im Editor und kann kopiert werden.
+
+Der Diktierknopf fordert `de-DE` beim verfügbaren Browser-Sprachdienst an. Die Unterstützung hängt von Browser und Gerät ab; je nach Dienst kann Audio online verarbeitet werden. Alternativ kann das Mikrofon der Handy-Tastatur verwendet werden. Es gibt keine eigene Audioablage und keine eigene API-Anbindung für das Diktat.
+
+Es werden keine Nutzerdaten an einen eigenen Server übertragen. Externe Reiseportale öffnen sich nur nach einem bewussten Klick. Da sich URL-Strukturen externer Anbieter ändern können, sind die Links als Suchhilfe und nicht als garantierte Buchungs-Deeplinks zu verstehen.
 
 ## Projektstruktur
 
@@ -57,7 +73,7 @@ Alle persönlichen Einstellungen und Preisstände liegen unter dem Schlüssel `r
 ## Roadmap
 
 1. Export und Import der Preisstände als JSON/CSV
-2. editierbare Hotelbewertungen mit Notizen und Quellen
+2. editierbare Hotelbewertungen mit Quellen
 3. Vergleich mehrerer Reiseprofile und Zeiträume
 4. installierbare 192/512-Pixel-PWA-Icons und Update-Hinweis
 5. optionale, offiziell lizenzierte Reiseanbieter-API, falls verfügbar
