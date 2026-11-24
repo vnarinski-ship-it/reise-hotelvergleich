@@ -6,8 +6,8 @@
   "scripts": {
     "start": "npx serve .",
     "test": "node --test",
-    "check": "node --check app.js && node --check core.js && node --check hotel-notes.js && node --check proofreading.js && node --test",
-    "test:browser": "node browser/hotel-notes.cjs && node browser/proofreading.cjs"
+    "check": "node --check app.js && node --check core.js && node --check hotel-notes.js && node --check proofreading.js && node --check note-timeline-core.js && node --test",
+    "test:browser": "node browser/hotel-notes.cjs && node browser/proofreading.cjs && node browser/timeline.cjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

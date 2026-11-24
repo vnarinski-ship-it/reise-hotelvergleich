@@ -60,6 +60,10 @@ Der Diktierknopf fordert `de-DE` beim verfügbaren Browser-Sprachdienst an. Die 
 
 Notiztexte erscheinen als reiner Text mit erhaltenen Zeilenumbrüchen bei den Hotelinformationen. HTML in einer Notiz wird nicht ausgeführt. Browserprüfungen simulieren LanguageTool-Antworten einschließlich Fehlern, Abbruch, Zeitlimit und Speicherfehlern; der Dienst wurde zusätzlich mit einem synthetischen Beispielsatz auf Erreichbarkeit und CORS geprüft.
 
+Hotelnotizen werden als sichtbarer Verlauf mit Datum und Uhrzeit bei den Hotelinformationen und im Editor angezeigt. Während einer Bearbeitung bleibt der Zeitstempel des aktuellen Beitrags gleich. Beim nächsten Öffnen wird angehängter Text als weiterer Beitrag gespeichert; eine Überarbeitung wird als „Neue Fassung“ gekennzeichnet. „＋ Neue Ergänzung“ startet einen leeren Beitrag mit eigenem Zeitstempel. Frühere Beiträge bleiben erhalten, auch wenn das Arbeitsfeld geleert wird. Alte Notizen ohne gespeichertes Datum tragen „Datum unbekannt“.
+
+Der Verlauf liegt additiv in `_noteTimeline.text` am jeweiligen Hotelnotiz-Datensatz; das bisherige Feld `text` bleibt als aktueller Arbeitswert bestehen. Speicherfehler rollen Verlaufsänderungen zurück. Preis- und Gewichtungsdaten bleiben getrennt. Logik- und Browserprüfungen decken Zeitstempel, Ergänzungen, Neuladen, Hoteldetails, Sortierung, getrennte Hotels und mobile Breiten ab.
+
 Es werden keine Nutzerdaten an einen eigenen Server übertragen. Externe Reiseportale öffnen sich nur nach einem bewussten Klick. Da sich URL-Strukturen externer Anbieter ändern können, sind die Links als Suchhilfe und nicht als garantierte Buchungs-Deeplinks zu verstehen.
 
 ## Projektstruktur
